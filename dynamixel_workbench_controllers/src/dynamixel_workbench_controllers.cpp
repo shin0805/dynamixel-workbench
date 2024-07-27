@@ -326,6 +326,7 @@ void DynamixelController::initPublisher()
 void DynamixelController::initSubscriber()
 {
   trajectory_sub_ = priv_node_handle_.subscribe("joint_trajectory", 100, &DynamixelController::trajectoryMsgCallback, this);
+  torque_enable_sub_ = priv_node_handle_.subscribe("torque_enable", 10, &DynamixelController::torqueEnableCallback, this);
   if (is_cmd_vel_topic_) cmd_vel_sub_ = priv_node_handle_.subscribe("cmd_vel", 10, &DynamixelController::commandVelocityCallback, this);
 }
 
@@ -760,6 +761,16 @@ bool DynamixelController::dynamixelCommandMsgCallback(dynamixel_workbench_msgs::
   res.comm_result = result;
 
   return true;
+}
+
+void DynamixelController::torqueEnableCallback(const std_msgs::Bool& msg){
+  for (auto const& dxl : dynamixel_){
+    if (msg.data){
+      this->dxl_wb_->torqueOn((uint8_t)dxl.second);
+    } else {
+      this->dxl_wb_->torqueOff((uint8_t)dxl.second);
+    }
+  } 
 }
 
 int main(int argc, char **argv)
