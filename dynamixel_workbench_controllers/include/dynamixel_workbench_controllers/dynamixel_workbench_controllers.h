@@ -66,6 +66,7 @@ class DynamixelController
   // ROS Topic Subscriber
   ros::Subscriber cmd_vel_sub_;
   ros::Subscriber trajectory_sub_;
+  ros::Subscriber joint_sub_;
   ros::Subscriber torque_enable_sub_;
 
   // ROS Service Server
@@ -121,11 +122,15 @@ class DynamixelController
   void initServer();
 
   void readCallback(const ros::TimerEvent&);
+  void readCallbackRaw();
   void writeCallback(const ros::TimerEvent&);
+  void writeCallbackRaw();
+  void readAndWriteCallback(const ros::TimerEvent&);
   void publishCallback(const ros::TimerEvent&);
 
   void commandVelocityCallback(const geometry_msgs::Twist::ConstPtr &msg);
   void trajectoryMsgCallback(const trajectory_msgs::JointTrajectory::ConstPtr &msg);
+  void jointMsgCallback(const trajectory_msgs::JointTrajectory::ConstPtr &msg);
   bool dynamixelCommandMsgCallback(dynamixel_workbench_msgs::DynamixelCommand::Request &req,
                                    dynamixel_workbench_msgs::DynamixelCommand::Response &res);
   void torqueEnableCallback(const std_msgs::Bool& msg);
